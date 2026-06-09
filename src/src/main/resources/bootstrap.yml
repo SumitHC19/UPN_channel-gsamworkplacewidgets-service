@@ -1,0 +1,25 @@
+spring:
+  application:
+    name: channel-gsamworkplacewidgets
+
+  cloud:
+    consul:
+      host: ${CONSUL_HOST:localhost}
+      port: ${CONSUL_PORT:8500}
+      scheme: ${CONSUL_SCHEME:http}      
+# Able to find other registered services, but self-registration is thru Registrator.
+      discovery:
+        enabled: true
+        register: false
+        health-check-path: /health
+      config:
+        enabled: true
+# Location of configuration folder.        
+        prefix: /upoint-config
+        format: FILES
+# Should it fail if it does not find the properties?        
+        fail-fast: false
+# Watch a key prefix with the interval provided and reload the conf         
+        watch:          
+          enabled: true
+          delay:   1000
