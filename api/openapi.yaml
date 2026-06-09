@@ -1,0 +1,44 @@
+openapi: 3.0.0
+info:
+  version: 1.0.0
+  title: Template Service..
+  description: >-
+    This service is intended to be used as an example microservice within the UPN microservice architecture. This contains a basic hello world message and includes connectivity to Consul (for service discovery and application configuration) and Redis (for session management).  
+  contact:
+    name: Dennis Harder
+    email: dennis.harder@alight.com
+  license:
+    name: Proprietary
+servers:
+  - url: 'https://api-dv.alight.com/api/template'
+    description: Development environment
+  - url: 'https://api-qa.alight.com/api/template'
+    description: Quality Assurance environment
+  - url: 'https://api-ste.alight.com/api/template'
+    description: Stress Test environment
+  - url: 'https://api-qc.alight.com/api/template'
+    description: Quality Control environment
+  - url: 'https://api.alight.com/api/template'
+    description: Production environment
+  - url: 'http://localhost/api/template'
+    description: Local Development environment    
+paths:
+  '/':
+    get:
+      summary: >-
+        Returns a hello world message including the docker container ip address as well as the host ip address. The hello world message is retreived from Consul template.yml.
+      responses:
+        '200':
+          description: OK
+      tags:
+        - API Documentation
+    
+  '/redis':
+    get:
+      summary: >-
+        Returns a hello world message including the docker container ip address as well as the host ip address. The hello world message is retreived from Consul template.yml. Both ip locations are stored and retreived from redis.
+      responses:
+        '200':
+          description: OK
+      tags:
+        - API Documentation

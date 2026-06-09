@@ -1,0 +1,90 @@
+buildscript {
+    ext {
+        springBootVersion = '3.3.3'
+
+        // Set build/publish version.
+        if (project.hasProperty('version') && (project.getProperty('version') == 'unspecified')) {
+            project.setProperty('version', 'UPOINT-SNAPSHOT')
+        }
+        version = project.getProperty('version')
+
+        // Set resolve/publish repository type.
+        repoType = project.hasProperty('repoType') ? project.getProperty('repoType') : 'upoint'
+    }
+
+    configurations.all {
+        resolutionStrategy.cacheDynamicVersionsFor 0, 'seconds'
+    }
+
+    repositories {
+        maven {
+            url "${artifactory_contextUrl}/${repoType}-plugins-release"
+        }
+    }
+
+    dependencies {
+        classpath("com.alight.gradle:devops-gradle-plugin:4.+") {
+            changing = true
+        }
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+        classpath("com.alight.gradle:automation-gradle-plugin:4.+") {
+            changing = true
+        }
+    }
+}
+
+plugins {
+    id 'io.spring.dependency-management' version '1.1.6'
+}
+
+// Apply plugins.
+apply plugin: com.alight.gradle.plugins.ServicePlugin
+apply plugin: 'io.spring.dependency-management'
+apply plugin: 'org.springframework.boot'
+apply plugin: com.alight.gradle.plugins.AutomationPlugin
+
+group = 'com.alight.upn'
+version = project.version
+
+dependencyManagement {
+    resolutionStrategy {
+        cacheDynamicVersionsFor 0, 'seconds'
+    }
+
+    imports {
+        mavenBom 'com.alight.upoint:foundation-shared-v9-util:9.+'
+        mavenBom 'com.alight.upoint:cache-shared-v7-util:7.+'
+        mavenBom 'com.alight.upoint:logging-shared-v7-util:7.+'
+        mavenBom 'com.alight.upoint:upn-spring-starter-v3-util:3.+'
+    }
+}
+
+// Project specific dependencies.
+dependencies {
+    implementation 'com.alight.upoint:upn-spring-starter-v3-util:3.+'
+    implementation 'com.alight.upoint:upn-spring-web:7.+'
+    implementation 'com.alight.upoint:upoint-logging:7.+'
+    implementation 'redis.clients:jedis:5.1.3'
+    implementation 'org.springframework.cloud:spring-cloud-starter-openfeign'
+    implementation 'jakarta.servlet:jakarta.servlet-api:6.0.0'
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
+    implementation 'org.springframework.cloud:spring-cloud-starter-bootstrap'
+    implementation 'org.springframework.cloud:spring-cloud-starter-consul-all'
+    implementation 'org.springframework.boot:spring-boot-starter-aop'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'commons-collections:commons-collections:3.2.2'
+	implementation 'com.nimbusds:nimbus-jose-jwt:9.15.2' 
+	implementation 'org.springframework.data:spring-data-redis:3.0.12'
+	implementation 'io.lettuce:lettuce-core:6.3.2.RELEASE'
+	implementation 'com.alight.upoint:upn-cache-framework:7.+'
+	implementation 'org.jsoup:jsoup:1.17.2'
+	
+
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'org.mockito:mockito-core:5.12.0'
+    testImplementation 'org.mockito:mockito-junit-jupiter:5.12.0'
+}
+
+tasks.withType(Test).configureEach {
+    useJUnitPlatform()
+}
